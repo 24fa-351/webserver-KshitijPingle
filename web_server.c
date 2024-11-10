@@ -12,6 +12,8 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
+#include "http_message.h"
+
 #define MAX_CONNECTIONS 5
 
 // Input pointer is freed in this function
@@ -19,11 +21,31 @@ void handle_connection(int* client_fd_ptr) {
     int client_fd = *client_fd_ptr;
     free(client_fd_ptr);
 
-    char buffer[1000];
-    int bytes_read = 0;
-    bytes_read = read(client_fd, buffer, sizeof(buffer));
-    printf("Server received : %s", buffer);
-    write(client_fd, buffer, bytes_read);
+    http_client_message_t* http_msg;
+    http_read_result_t result;
+
+    while (1) {
+        // Equivalent of reading from the client from echo server assignment
+        read_http_request(client_fd, &http_msg, &result);
+
+        if (result == BAD_REQUEST) {
+            printf("Bad request.\n");
+            close(client_fd);
+            return;
+        }
+        else if (result == CLOSED_CONNECTION) {
+            printf("Connection closed.\n");
+            close(client_fd);
+            return;
+        }
+
+        // Equivalent of writing to the client from echo server assignment
+        respond_to_http_request(client_fd, http_msg);
+
+        http_free_message(http_msg);
+    }
+
+    printf("Done with connection on %d.\n", client_fd);
 }
 
 
@@ -74,7 +96,10 @@ int main(int argc, char *argv[]) {
         // Requires sending pointer to sockaddr_in struct typecasted to sockaddr
     returnval = bind(server_fd, (struct sockaddr *) &sock_addr, sizeof(sock_addr));
     
-
+    if (returnval < 0) {
+        printf("Error binding socket to port %d.\n", PORT);
+        exit(1);
+    }
 
     returnval = listen(server_fd, MAX_CONNECTIONS);
 

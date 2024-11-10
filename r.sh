@@ -8,4 +8,4 @@
 
 
 # compile the program
-gcc -o web_server web_server.c
+gcc -o web_server http_message.c web_server.c
