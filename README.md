@@ -1,8 +1,9 @@
 # 351-Web Server  
 Assigment 12  
 
-## Working Right Now  
+## Functionalities  
 - Handling multiple connections  
+    - Used fork to respond to HTTP messages
 - Parsing HTTP messages  
 - Responding to HTTP messages  
     - /static is not working currently  

@@ -43,10 +43,16 @@ void handle_connection(int *client_fd_ptr)
             return;
         }
 
-        // Equivalent of writing to the client from echo server assignment
-        respond_to_http_request(client_fd, http_msg);
+        int pid = fork();
+        if (pid == 0)
+        {
+            // Equivalent of writing to the client from echo server assignment
+            respond_to_http_request(client_fd, http_msg);
 
-        http_free_message(http_msg);
+            http_free_message(http_msg);
+        }
+
+        wait(NULL);
     }
 
     printf("Done with connection on %d.\n", client_fd);
