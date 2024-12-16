@@ -1,4 +1,7 @@
-// Add a header later
+// Kshitij Pingle
+// kpingle@csu.fullerton.edu
+// Date: November 10, 2024
+// Description: File to handle HTTP messages
 
 #include <stdio.h>
 #include <stdlib.h>
