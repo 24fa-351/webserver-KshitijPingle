@@ -8,6 +8,7 @@
 #include <stdbool.h>
 
 #include "http_message.h"
+#include "routes.h"
 
 bool is_complete_http_message(char *buffer)
 {
@@ -53,15 +54,26 @@ int respond_to_http_request(int client_fd, http_client_message_t *http_msg)
     char response[1000];
     char *body[1000];
 
-    // 3 main routes:
-        // /static
-        // /stats
-        // /calc
-
-    if (strstr("/stats", http_msg->path) != NULL)
+    if (strstr("/static", http_msg->path) != NULL)
     {
-        // msg preview
-        // GET /stats HTTP/1.1
+        // get the path of the file
+        char *path = http_msg->path + 8; // Skip the "/static/" part
+
+        if (file_exists(path))
+        {
+            // give back the binary file
+            // binary_file = give_binary_file(path)
+        }
+        else
+        {
+            // 404 Not Found
+            sprintf(response, "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n");
+            write(client_fd, response, strlen(response));
+            return 0;
+        }
+    }
+    else if (strstr("/stats", http_msg->path) != NULL)
+    {
         *body = get_stats_html(num_requests, received_bytes, sent_bytes);
     }
     else if (strstr("/calc", http_msg->path) != NULL)

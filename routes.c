@@ -2,11 +2,31 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "http_message.h"
 #include "routes.h"
 
-// Function to return a properly formatted HTML document
+// Function to check if a file exists given the file's path
+int file_exists(const char *file_path)
+{
+    FILE *file = fopen(file_path, "r");
+    if (file)
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+
+// Function to give back a binary file
+void give_binary_file(const char *file_path)
+{
+
+    return;
+}
+
+// Function to return a the current server stats in HTML format
 const char *get_stats_html(int num_requests, int received_bytes, int sent_bytes)
 {
     static char html[1024];
